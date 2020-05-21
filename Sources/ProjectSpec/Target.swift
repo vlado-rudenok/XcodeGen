@@ -25,7 +25,11 @@ public struct LegacyTarget: Equatable {
 }
 
 public struct Target: ProjectTarget {
+    
+    public static var defaultNameDividerChar = "_"
+    
     public var name: String
+    public var nameDividerChar: String
     public var type: PBXProductType
     public var platform: Platform
     public var settings: Settings
@@ -64,6 +68,7 @@ public struct Target: ProjectTarget {
 
     public init(
         name: String,
+        nameDividerChar: String = Target.defaultNameDividerChar,
         type: PBXProductType,
         platform: Platform,
         productName: String? = nil,
@@ -86,6 +91,7 @@ public struct Target: ProjectTarget {
         attributes: [String: Any] = [:]
     ) {
         self.name = name
+        self.nameDividerChar = nameDividerChar
         self.type = type
         self.platform = platform
         self.deploymentTarget = deploymentTarget
@@ -246,6 +252,8 @@ extension Target: NamedJSONDictionaryConvertible {
     public init(name: String, jsonDictionary: JSONDictionary) throws {
         let resolvedName: String = jsonDictionary.json(atKeyPath: "name") ?? name
         self.name = resolvedName
+        self.nameDividerChar = jsonDictionary.json(atKeyPath: "nameDividerChar")
+            ?? Target.defaultNameDividerChar
         productName = jsonDictionary.json(atKeyPath: "productName") ?? resolvedName
         let typeString: String = try jsonDictionary.json(atKeyPath: "type")
         if let type = PBXProductType(string: typeString) {
