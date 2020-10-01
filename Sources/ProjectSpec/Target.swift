@@ -50,6 +50,7 @@ public struct Target: ProjectTarget {
     public var deploymentTarget: Version?
     public var attributes: [String: Any]
     public var productName: String
+    public var onlyCopyFilesOnInstall: Bool
 
     public var isLegacy: Bool {
         legacy != nil
@@ -88,7 +89,8 @@ public struct Target: ProjectTarget {
         buildRules: [BuildRule] = [],
         scheme: TargetScheme? = nil,
         legacy: LegacyTarget? = nil,
-        attributes: [String: Any] = [:]
+        attributes: [String: Any] = [:],
+        onlyCopyFilesOnInstall: Bool = false
     ) {
         self.name = name
         self.nameDividerChar = nameDividerChar
@@ -112,6 +114,7 @@ public struct Target: ProjectTarget {
         self.scheme = scheme
         self.legacy = legacy
         self.attributes = attributes
+        self.onlyCopyFilesOnInstall = onlyCopyFilesOnInstall
     }
 }
 
@@ -317,6 +320,7 @@ extension Target: NamedJSONDictionaryConvertible {
         scheme = jsonDictionary.json(atKeyPath: "scheme")
         legacy = jsonDictionary.json(atKeyPath: "legacy")
         attributes = jsonDictionary.json(atKeyPath: "attributes") ?? [:]
+        onlyCopyFilesOnInstall = jsonDictionary.json(atKeyPath: "onlyCopyFilesOnInstall") ?? false
     }
 }
 
@@ -346,6 +350,10 @@ extension Target: JSONEncodable {
 
         if productName != name {
             dict["productName"] = productName
+        }
+
+        if onlyCopyFilesOnInstall {
+            dict["onlyCopyFilesOnInstall"] = true
         }
 
         return dict

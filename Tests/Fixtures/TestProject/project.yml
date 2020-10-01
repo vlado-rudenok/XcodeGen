@@ -11,10 +11,16 @@ options:
   groupSortPosition: top
   preGenCommand: echo "This is a pre-gen command"
   postGenCommand: scripts/script.sh
+  fileTypes:
+    abc:
+      buildPhase: none
+    abcd:
+      buildPhase: none
 fileGroups:
   - Configs
   - FileGroup
   - SomeFile
+  - Utilities
 projectReferences:
   AnotherProject:
     path: ./AnotherProject/AnotherProject.xcodeproj
@@ -69,6 +75,11 @@ targets:
         excludes:
           - "**/excluded-file"
           - "excluded-file"
+          - "Model.xcmappingmodel"
+      - path: App_iOS
+        name: App
+        includes:
+          - "Model.xcmappingmodel"
       - path: StandaloneFiles/Standalone.swift
       - FileGroup/UnderFileGroup
       - Resources/MyBundle.bundle
@@ -113,6 +124,7 @@ targets:
       - sdk: Contacts.framework
       - bundle: BundleX.bundle
       - target: AnotherProject/ExternalTarget
+    onlyCopyFilesOnInstall: true
     scheme:
       testTargets:
         - App_iOS_Tests
@@ -184,11 +196,12 @@ targets:
     sources: iMessageExtension
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.project.iMessageApp.extension
+    scheme: {}
 
   iMessageStickersExtension:
     type: app-extension.messages-sticker-pack
     platform: iOS
-    sources:       
+    sources:
       - path: iMessageStickers
 
   StaticLibrary_ObjC:
@@ -252,7 +265,7 @@ targets:
     sources: App_iOS_UITests
     dependencies:
       - target: App_iOS
-      
+
   App_macOS_Tests:
     type: bundle.unit-test
     platform: macOS
@@ -293,11 +306,12 @@ schemes:
   App_Scheme:
     build:
       targets:
-        App_iOS: all    
+        App_iOS: all
     run:
       simulateLocation:
         allow: true
         defaultLocation: Honolulu, HI, USA
+      customLLDBInit: ${SRCROOT}/.lldbinit
     test:
       gatherCoverageData: true
       targets:
@@ -305,6 +319,7 @@ schemes:
         - name: App_iOS_Tests
           parallelizable: true
           randomExecutionOrder: true
+      customLLDBInit: ${SRCROOT}/.lldbinit
 targetTemplates:
   MyTemplate:
     scheme: {}
